@@ -3,6 +3,21 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]in/
+*.csproj
+*.unityproj
+*.sln
+*.user
+*.suo
+*.log
+*.vs/
+.DS_Store
+
+
 # User-specific files
 *.rsuser
 *.suo
