@@ -23,6 +23,7 @@ public class Spawner : MonoBehaviour
         // Tạo cột mới tại vị trí mới, cao hơn cột trước
         Vector3 newSpawnPosition = new Vector3(lastSpawnPosition.x, lastSpawnPosition.y + verticalOffset, 0f);
         GameObject newColumn = Instantiate(columnPrefab, newSpawnPosition, Quaternion.identity);
+        //Instantiate(original, position, rotation);  Quaternion.identity tương đương  = 0
 
         // Cập nhật vị trí cột vừa spawn
         lastSpawnPosition = newSpawnPosition;
@@ -30,4 +31,5 @@ public class Spawner : MonoBehaviour
         // Gọi lại sau thời gian delay
         Invoke("SpawnColumn", spawnDelay);
     }
+
 }
