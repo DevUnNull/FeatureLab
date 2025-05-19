@@ -1,19 +1,38 @@
 ﻿using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class DragAndDrop : MonoBehaviour
 {
+    // keo tha
     private Vector3 offset;              // Khoảng cách từ điểm chuột đến tâm quân cờ khi bắt đầu kéo
     private bool isDragging = false;     // Biến kiểm tra đang kéo hay không
     private Vector2 previousPosition;    // Vị trí trước đó của quân cờ (để quay về nếu thả sai)
+
+    // mua
+    private bool isPlacedOnBoard = false;
+    public bool isBuy = true;
+    private Transform originalParent;
+
+    //mua tru tien
+    private PricePlayer priceData;
+    private int price;
 
     private void Start()
     {
         // Ghi lại vị trí ban đầu khi game bắt đầu
         previousPosition = transform.position;
+        priceData = GetComponent<PricePlayer>(); // lấy script gắn trên prefab
+        price = priceData != null ? priceData.price : 0; // nếu không có thì giá = 0
     }
 
     private void OnMouseDown()
     {
+        GetComponent<Animator>().enabled = false;
+        originalParent = transform.parent;
+        transform.SetParent(null); // tách khỏi slot để không bị reset
+
+
+
         // Lấy tọa độ chuột trong thế giới và tính offset so với vị trí quân cờ
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);//
         offset = transform.position - mouseWorld;//
@@ -59,20 +78,46 @@ public class DragAndDrop : MonoBehaviour
             }
         }
 
-        // Nếu tìm được tile hợp lệ
         if (closestTile != null)
         {
-            // Snap quân cờ về giữa tile
-            transform.position = closestTile.position;
+            // Nếu chưa mua và không đủ tiền → từ chối mua
+            if (!isBuy && !GoldManager.Instance.HasEnoughGold(price))
+            {
+                Debug.Log("❌ Không đủ tiền mua " + gameObject.name + ", cần " + price);
+                transform.position = previousPosition; // trở về vị trí cũ
+                return; // ❗ THOÁT LUÔN → không đặt lên bàn
+            }
 
-            // Ghi lại vị trí này là vị trí hợp lệ mới nhất
+            // ✅ Chỉ vào đây khi đủ tiền hoặc đã mua
+            transform.position = closestTile.position;
             previousPosition = closestTile.position;
+            isPlacedOnBoard = true;
+
+            if (!isBuy)
+            {
+                isBuy = true;
+                GoldManager.Instance.SpendGold(price);
+            }
+
+            GetComponent<Animator>().enabled = true;
         }
+
         else
         {
-            // Nếu không thả vào tile nào, trả lại vị trí cũ
-            Debug.Log("Thả ra ngoài bàn cờ.");
-            transform.position = previousPosition;
+            if (!isPlacedOnBoard)
+            {
+                // Nếu chưa từng được đặt vào bàn thì xoá (ví dụ mới kéo ra từ shop)
+                Debug.Log("Kéo ra nhưng không thả vào bàn → huỷ");
+                transform.position = previousPosition;
+            }
+            else
+            {
+                // Đã từng được đặt → trả về vị trí gần nhất
+                transform.position = previousPosition;
+            }
         }
+
     }
+
+
 }

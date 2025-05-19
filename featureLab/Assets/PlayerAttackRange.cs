@@ -12,6 +12,12 @@ public class PlayerAttackController : MonoBehaviour
     public float attackCooldown = 0.5f;
     private float lastAttackTime;
 
+    private void Start()
+    {
+        GetComponent<Animator>().enabled = false;
+    }
+
+
     // Gọi hàm này từ animation event hoặc nút bấm
     public void PerformAttack()
     {
