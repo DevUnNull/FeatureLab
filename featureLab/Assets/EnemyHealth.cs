@@ -4,7 +4,8 @@ public class EnemyHealth : MonoBehaviour
 {
     public float maxHealth = 30f;
     private float currentHealth;
-
+    public int gold =1;
+    public int goldAffter;
     void Start()
     {
         currentHealth = maxHealth;
@@ -19,6 +20,7 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth <= 0f)
         {
             Die();
+            GoldManager.Instance.AddGold(gold);
         }
     }
 

@@ -4,33 +4,30 @@ using UnityEngine;
 
 public class T_EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;             // Prefab của enemy
-    public float spawnInterval = 2f;           // Khoảng thời gian giữa các lần spawn
+    [Header("Enemy")]
+    public GameObject[] enemyPrefabs;          // Danh sách các enemy prefab
+    private GameObject currentEnemyPrefab;     // Prefab hiện tại đang dùng để spawn
+    public float spawnInterval = 2f;
+
+    [Header("Gold")]
+    public int gold;
 
     private BoardGenerator board;
 
     private void Start()
     {
-        board = FindObjectOfType<BoardGenerator>(); // Tìm BoardGenerator trong Scene
-
+        board = FindObjectOfType<BoardGenerator>();
         if (board == null)
         {
             Debug.LogError("Không tìm thấy BoardGenerator!");
             return;
         }
 
-        StartCoroutine(SpawnLoopDelayed()); // Bắt đầu vòng lặp spawn
-    }
-
-    IEnumerator SpawnLoopDelayed()
-    {
-        // Đợi 1 frame để BoardGenerator khởi tạo xong
-        yield return null;
-
-        // Hoặc đợi 0.1 giây nếu cần chắc chắn
-        // yield return new WaitForSeconds(0.1f);
+        // Chọn enemy đầu tiên ngẫu nhiên
+        currentEnemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
         StartCoroutine(SpawnLoop());
+        StartCoroutine(ChangeEnemyEvery5Seconds());
     }
 
     IEnumerator SpawnLoop()
@@ -42,15 +39,34 @@ public class T_EnemySpawner : MonoBehaviour
         }
     }
 
+    IEnumerator ChangeEnemyEvery5Seconds()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(5f);
+
+            // Random enemy mới (khác với cái cũ)
+            GameObject newPrefab;
+            do
+            {
+                newPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+            } while (newPrefab == currentEnemyPrefab && enemyPrefabs.Length > 1);
+
+            currentEnemyPrefab = newPrefab;
+
+            Debug.Log($"🔁 Đổi sang enemy mới: {currentEnemyPrefab.name}");
+        }
+    }
+
     void SpawnEnemy()
     {
-        // Tạo enemy tại vị trí hiện tại của spawner
-        GameObject enemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+        GameObject enemy = Instantiate(currentEnemyPrefab, transform.position, Quaternion.identity);
 
-        // Lấy đường đi từ board
+        EnemyHealth priceData = enemy.GetComponent<EnemyHealth>();
+        gold = priceData.gold;
+
         List<Transform> path = board.GetBorderTiles();
 
-        // Gán đường đi cho enemy
         EnemyMovement movement = enemy.GetComponent<EnemyMovement>();
         movement.enabled = true;
         movement.SendMessage("SetWaypoints", path);

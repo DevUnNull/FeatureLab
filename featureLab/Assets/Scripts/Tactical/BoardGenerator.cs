@@ -10,6 +10,7 @@ public class BoardGenerator : MonoBehaviour
 
     private GameObject[,] tiles;  // Lưu lại toàn bộ tile
 
+
     void Start()
     {
         GenerateBoard();
@@ -63,5 +64,6 @@ public class BoardGenerator : MonoBehaviour
 
         return borderTiles;
     }
+
 
 }

@@ -117,6 +117,18 @@ public class DragAndDrop : MonoBehaviour
             }
         }
 
+        // ⬇️ Cuối hàm OnMouseUp()
+
+        // Kiểm tra nếu đang thả lên vùng huỷ
+        if (DestroyUnitTrigger.isOverDestroyZone)
+        {
+            Debug.Log("🗑️ Tướng bị huỷ do thả vào vùng huỷ");
+            Destroy(gameObject);
+            GoldManager.Instance.AddGold(price);
+            return;
+        }
+
+
     }
 
 

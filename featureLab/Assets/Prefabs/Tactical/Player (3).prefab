@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -3699582040827586966}
   m_Layer: 0
   m_Name: Player (3)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: 1
-  attackDamage: 10
+  attackDamage: 8
   attackPoint: {fileID: 5999839254499715141}
   enemyLayer:
     serializedVersion: 2
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38a38c9f71de90d4faacd011965e8292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 1
+  price: 7
 --- !u!1 &9016366108125057345
 GameObject:
   m_ObjectHideFlags: 0
